@@ -1,0 +1,18 @@
+MASS BUILDER 75 — paquete PWA
+
+CONTENIDO
+- index.html: aplicación web.
+- manifest.webmanifest: configuración instalable.
+- sw.js: caché básica para funcionamiento offline.
+- icon-192.png e icon-512.png: iconos.
+
+IMPORTANTE
+1. Esto NO es un APK Android nativo.
+2. Para instalar como PWA, los archivos deben publicarse en una dirección HTTPS.
+3. Después abre esa dirección en Chrome en el Redmi y usa el menú > Instalar aplicación / Añadir a pantalla de inicio.
+4. La primera visita debe hacerse con Internet para descargar la caché.
+5. Los registros se guardan en el almacenamiento local del navegador. Exporta copias periódicamente.
+6. El caché offline cubre la interfaz, no los vídeos personales que se seleccionan desde el móvil.
+7. Las notificaciones programadas aunque la app esté cerrada todavía no están implementadas.
+
+No abras index.html como archivo local esperando instalación PWA: el service worker requiere HTTPS (o localhost).

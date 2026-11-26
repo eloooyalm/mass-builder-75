@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101510">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>MASS BUILDER 75</title>
+<style>
+:root{--bg:#0b100c;--panel:#151e17;--panel2:#1c2a20;--green:#65f58a;--muted:#a6b5a9;--line:#2b3b2f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f2f7f3;font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:22px 18px 16px;background:linear-gradient(145deg,#17251a,#0b100c);border-bottom:1px solid var(--line)}
+h1{margin:0;color:var(--green);font-size:24px;letter-spacing:1px}header p{margin:5px 0 0;color:var(--muted);font-size:13px}
+main{padding:16px;max-width:760px;margin:auto;padding-bottom:90px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#111912;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:5}
+nav button{background:none;border:0;color:var(--muted);font-size:11px;padding:5px;min-width:60px}nav button.active{color:var(--green)}
+.tab{display:none}.tab.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px;margin:12px 0}
+h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:0 0 8px;color:var(--green)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--panel2);border-radius:12px;padding:12px}.stat b{font-size:22px;color:var(--green);display:block}.stat small{color:var(--muted)}
+button.primary{background:var(--green);color:#071109;border:0;border-radius:10px;padding:11px 14px;font-weight:750}
+button.secondary{background:#243329;color:#effff2;border:1px solid #385140;border-radius:10px;padding:10px 12px}
+button:disabled{opacity:.45}
+label{display:block;color:var(--muted);font-size:13px;margin:10px 0 5px}
+input,select{width:100%;background:#0d150f;color:#fff;border:1px solid #385140;border-radius:9px;padding:11px;font:inherit}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.exercise{padding:11px 0;border-top:1px solid var(--line)}.exercise:first-of-type{border-top:0}
+.exercise strong{display:block}.exercise small{color:var(--muted)}
+.tag{display:inline-block;color:var(--green);background:#1c3523;border-radius:99px;padding:4px 9px;font-size:11px;margin:2px}
+.muted{color:var(--muted);font-size:13px}.daybtn{margin:3px;padding:8px 10px}
+ul{padding-left:20px}.check{display:flex;align-items:center;gap:9px;margin:9px 0}.check input{width:auto;accent-color:var(--green)}
+progress{width:100%;height:10px;accent-color:var(--green)}
+footer{color:var(--muted);font-size:11px;text-align:center;padding:12px}
+</style>
+</head>
+<body>
+<header><h1>MASS BUILDER 75</h1><p>DISCIPLINA · FUERZA · CONSTANCIA &nbsp; | &nbsp; MODO LOCAL</p></header>
+<main>
+<section id="home" class="tab active">
+ <div class="card"><h2>Tu objetivo</h2><div class="grid">
+  <div class="stat"><b id="currentWeight">65,0 kg</b><small>Último peso registrado</small></div>
+  <div class="stat"><b>75 kg</b><small>Meta</small></div>
+ </div><p class="muted" id="weightGap">10 kg para tu objetivo</p><progress id="weightProgress" value="65" max="75"></progress></div>
+ <div class="grid">
+  <div class="stat"><b>5 días</b><small>Entrenamiento semanal</small></div>
+  <div class="stat"><b>2.300</b><small>kcal objetivo inicial/día</small></div>
+ </div>
+ <div class="card"><h2>Plan de hoy</h2><p id="todayPlan" class="muted"></p><button class="primary" onclick="showTab('training')">Ver entrenamiento</button></div>
+ <div class="card"><h2>Registro rápido</h2><label for="quickWeight">Peso de hoy (kg)</label><div class="row"><input id="quickWeight" type="number" min="30" max="250" step=".1" placeholder="Ej. 65,2"><button class="primary" onclick="saveWeight()">Guardar</button></div><p class="muted">Pésate en condiciones parecidas y valora la tendencia semanal, no un solo día.</p></div>
+</section>
+<section id="training" class="tab">
+ <h2>Entrenamiento</h2><p class="muted">Selecciona el día. Usa solo sillas y superficies firmes y estables.</p>
+ <div id="dayButtons"></div><div class="card"><h2 id="dayTitle"></h2><p class="muted">Marca las series de cada ejercicio. Al completar todas las series, podrás pasar al siguiente ejercicio y abrir el vídeo motivacional si has añadido alguno.</p><div id="exerciseList"></div><button class="primary" onclick="completeWorkout()">Marcar sesión completada</button><p class="muted" id="workoutMessage"></p></div>
+ <div class="card"><h3>Temporizador de descanso</h3><div class="grid"><div class="stat"><b id="timerDisplay">01:30</b><small>Tiempo restante</small></div><div class="stat"><b>90 s</b><small>Descanso inicial</small></div></div><div class="row" style="margin-top:10px"><button class="primary" onclick="startTimer()">Iniciar</button><button class="secondary" onclick="pauseTimer()">Pausar</button><button class="secondary" onclick="resetTimer()">Reiniciar</button></div><p class="muted">El temporizador funciona mientras esta pantalla permanece abierta.</p></div>
+ <div class="card"><h3>Vídeos motivacionales</h3><p class="muted">Añade vídeos guardados en tu móvil. Se reproducirán en orden aleatorio sin repetirse hasta completar la lista. Los archivos se mantienen en esta sesión del navegador; aún no se guardan dentro de un APK.</p><input id="videoFiles" type="file" accept="video/*" multiple><div class="row" style="margin-top:10px"><button class="primary" onclick="playNextVideo()">Reproducir siguiente</button><button class="secondary" onclick="skipVideo()">Saltar</button></div><video id="motivationVideo" controls playsinline style="width:100%;margin-top:12px;border-radius:12px;display:none"></video><p id="videoStatus" class="muted">No hay vídeos cargados.</p></div>
+ <div class="card"><h3>Reglas de progresión</h3><ul class="muted"><li>Trabaja normalmente dejando 1–3 repeticiones en reserva.</li><li>Cuando completes el máximo de repeticiones en todas las series, añade 1–2 kg a la mochila.</li><li>Calienta antes de empezar y detente si aparece dolor agudo.</li></ul></div>
+</section>
+<section id="nutrition" class="tab">
+ <h2>Nutrición</h2><div class="card"><div class="grid"><div class="stat"><b>2.300</b><small>kcal iniciales</small></div><div class="stat"><b>130–145 g</b><small>proteína diaria</small></div></div>
+ <p class="muted">Objetivo inicial orientativo. Ajusta según el promedio de peso de 14 días y tu evolución.</p></div>
+ <div class="card"><h2>Comidas del día</h2><div id="mealChecks"></div><p id="mealProgress" class="muted"></p><button class="secondary" onclick="resetMeals()">Reiniciar comidas de hoy</button></div>
+ <div class="card"><h3>Horario de referencia</h3><p class="muted">06:45 desayuno · 11:00 batido · 14:00 comida · 17:30 merienda · 21:00 cena</p></div>
+</section>
+<section id="progress" class="tab">
+ <h2>Tu progreso</h2><div class="card"><h3>Registrar peso</h3><label for="weightInput">Peso corporal (kg)</label><div class="row"><input id="weightInput" type="number" min="30" max="250" step=".1" placeholder="Ej. 65,4"><button class="primary" onclick="saveWeightFromProgress()">Guardar</button></div></div>
+ <div class="card"><h3>Historial de peso</h3><div id="weightHistory" class="muted">Todavía no hay registros.</div></div>
+ <div class="card"><h3>Sesiones completadas</h3><div class="stat"><b id="workoutCount">0</b><small>sesiones registradas en este dispositivo</small></div></div>
+ <p class="muted">No se registran medidas corporales ni fotografías.</p>
+</section>
+<section id="settings" class="tab">
+ <h2>Ajustes y datos</h2><div class="card"><h3>Recordatorios previstos</h3><p class="muted">06:45 despertar · 09:30 entrenamiento · recordatorios de comidas.</p><p class="muted">Esta primera versión no puede enviar notificaciones fiables con la app cerrada. Esa función requiere empaquetar e instalar una app Android con permisos adecuados.</p></div>
+ <div class="card"><h3>Guardar una copia</h3><p class="muted">Exporta tus registros para conservarlos al cambiar de dispositivo o navegador.</p><button class="primary" onclick="exportData()">Exportar mis datos</button></div>
+ <div class="card"><h3>Restablecer</h3><button class="secondary" onclick="clearData()">Borrar los datos guardados</button></div>
+</section>
+<div class="card"><h3>Instalar en Android</h3><p class="muted">Cuando esta web esté publicada mediante HTTPS, abre el menú de Chrome y elige “Instalar aplicación” o “Añadir a pantalla de inicio”.</p><button class="secondary" id="installButton" style="display:none" onclick="installApp()">Instalar aplicación</button></div>
+<footer>Prototipo PWA · Los registros se guardan localmente en este dispositivo.</footer>
+</main>
+<nav>
+<button class="active" data-tab="home" onclick="showTab('home')">⌂<br>Inicio</button>
+<button data-tab="training" onclick="showTab('training')">◆<br>Entreno</button>
+<button data-tab="nutrition" onclick="showTab('nutrition')">◉<br>Comidas</button>
+<button data-tab="progress" onclick="showTab('progress')">↗<br>Progreso</button>
+<button data-tab="settings" onclick="showTab('settings')">⚙<br>Ajustes</button>
+</nav>
+<script>
+const plan=[
+{name:"Lunes · Push",items:[["Flexiones clásicas","3 × 8–15"],["Flexiones con mochila","3 × 6–12"],["Pike push-ups","3 × 6–12"],["Flexiones cerradas","2 × 8–12"],["Elevaciones laterales con botellas","3 × 12–20"],["Extensión de tríceps","2 × 10–15"]]},
+{name:"Martes · Piernas A",items:[["Sentadilla con mochila","4 × 8–15"],["Sentadilla búlgara","3 × 8–12 por pierna"],["Peso muerto rumano con mochila","3 × 10–15"],["Zancadas atrás","2 × 10–12 por pierna"],["Elevación de gemelos","4 × 12–20"],["Plancha","3 × 30–60 s"]]},
+{name:"Miércoles · Pull",items:[["Remo inclinado con mochila","4 × 8–15"],["Remo unilateral","3 × 10–15 por lado"],["Pullover con mochila","3 × 10–15"],["Curl de bíceps","3 × 8–15"],["Elevaciones Y-T tumbado","2 × 10–15"]]},
+{name:"Jueves · Tren superior",items:[["Flexiones con pies elevados","3 × 8–15"],["Flexiones abiertas","3 × 8–15"],["Remo con mochila","3 × 10–15"],["Pájaros con botellas","3 × 12–20"],["Curl de bíceps","2 × 10–15"],["Extensión de tríceps","2 × 10–15"]]},
+{name:"Viernes · Piernas B",items:[["Zancadas atrás","3 × 10–12 por pierna"],["Peso muerto rumano unilateral","3 × 8–12 por pierna"],["Puente de glúteos con mochila","4 × 10–20"],["Curl femoral deslizante con toalla","3 × 8–12"],["Sentadilla con pausa","3 × 10–15"],["Dead bug","3 × 10 por lado"],["Gemelos","3 × 15–25"]]}
+];
+const KEY="massbuilder75_v1";let data=JSON.parse(localStorage.getItem(KEY)||'{"weights":[],"workouts":[],"meals":{}}');let selectedDay=0;let timerSeconds=90;let timerInterval=null;let videoUrls=[];let videoOrder=[];let videoIndex=0;
+function persist(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function showTab(id){document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.tab===id))}
+function renderDays(){document.getElementById("dayButtons").innerHTML=plan.map((d,i)=>`<button class="secondary daybtn" onclick="selectDay(${i})">${["Lun","Mar","Mié","Jue","Vie"][i]}</button>`).join("");selectDay(selectedDay)}
+function selectDay(i){selectedDay=i;document.getElementById("dayTitle").textContent=plan[i].name;document.getElementById("exerciseList").innerHTML=plan[i].items.map((e,n)=>{let sets=Number((e[1].match(/^(\\d+)/)||[])[1]||3);return `<div class="exercise"><strong>${e[0]}</strong><small>${e[1]}</small><div class="row" style="margin-top:7px"><span class="muted">Series completadas</span><span id="setCount${n}" class="tag">0 / ${sets}</span><button class="secondary" onclick="markSet(${n},${sets})">+ Serie</button></div></div>`}).join("");document.getElementById("workoutMessage").textContent="";window.setCounts={}} 
+function markSet(n,total){window.setCounts=window.setCounts||{};let v=Math.min(total,(window.setCounts[n]||0)+1);window.setCounts[n]=v;let el=document.getElementById("setCount"+n);if(el)el.textContent=v+" / "+total;if(v===total){document.getElementById("workoutMessage").textContent="¡Ejercicio completado! Puedes iniciar tu vídeo motivacional.";if(videoUrls.length)playNextVideo()}}
+function updateTimer(){let m=String(Math.floor(timerSeconds/60)).padStart(2,"0"),s=String(timerSeconds%60).padStart(2,"0");document.getElementById("timerDisplay").textContent=m+":"+s}
+function startTimer(){if(timerInterval)return;timerInterval=setInterval(()=>{if(timerSeconds>0){timerSeconds--;updateTimer()}else{pauseTimer();if("vibrate" in navigator)navigator.vibrate([250,150,250]);}},1000)}
+function pauseTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}}
+function resetTimer(){pauseTimer();timerSeconds=90;updateTimer()}
+document.getElementById("videoFiles").addEventListener("change",e=>{videoUrls.forEach(u=>URL.revokeObjectURL(u));videoUrls=Array.from(e.target.files||[]).map(f=>URL.createObjectURL(f));videoOrder=videoUrls.map((_,i)=>i);for(let i=videoOrder.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[videoOrder[i],videoOrder[j]]=[videoOrder[j],videoOrder[i]]}videoIndex=0;document.getElementById("videoStatus").textContent=videoUrls.length?videoUrls.length+" vídeo(s) preparados para esta sesión.":"No hay vídeos cargados.";document.getElementById("motivationVideo").style.display="none"});
+function playNextVideo(){if(!videoUrls.length){document.getElementById("videoStatus").textContent="Añade vídeos desde el selector para reproducirlos.";return}if(videoIndex>=videoOrder.length){videoOrder=videoUrls.map((_,i)=>i);for(let i=videoOrder.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[videoOrder[i],videoOrder[j]]=[videoOrder[j],videoOrder[i]]}videoIndex=0}let v=document.getElementById("motivationVideo");v.src=videoUrls[videoOrder[videoIndex++]];v.style.display="block";v.play().catch(()=>document.getElementById("videoStatus").textContent="Pulsa reproducir en el vídeo para iniciar el sonido.");document.getElementById("videoStatus").textContent="Vídeo "+videoIndex+" de "+videoOrder.length+" en esta ronda."}
+function skipVideo(){let v=document.getElementById("motivationVideo");v.pause();playNextVideo()}
+document.getElementById("motivationVideo").addEventListener("ended",()=>{playNextVideo()});
+function completeWorkout(){data.workouts.push({date:new Date().toISOString(),day:plan[selectedDay].name});persist();document.getElementById("workoutMessage").textContent="Sesión registrada. ¡Buen trabajo!"}
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function renderMeals(){let names=["Desayuno · 06:45","Batido · 11:00","Comida · 14:00","Merienda · 17:30","Cena · 21:00"];let done=data.meals[todayKey()]||[];document.getElementById("mealChecks").innerHTML=names.map((n,i)=>`<label class="check"><input type="checkbox" ${done.includes(i)?"checked":""} onchange="toggleMeal(${i},this.checked)">${n}</label>`).join("");document.getElementById("mealProgress").textContent=`${done.length} de 5 comidas marcadas`}
+function toggleMeal(i,on){let k=todayKey(),a=data.meals[k]||[];data.meals[k]=on?[...new Set([...a,i])]:a.filter(x=>x!==i);persist()}
+function resetMeals(){delete data.meals[todayKey()];persist()}
+function saveWeight(){let v=Number(document.getElementById("quickWeight").value);if(v<30||v>250||!v)return alert("Introduce un peso válido en kg.");data.weights.push({date:todayKey(),kg:v});document.getElementById("quickWeight").value="";persist()}
+function saveWeightFromProgress(){let el=document.getElementById("weightInput"),v=Number(el.value);if(v<30||v>250||!v)return alert("Introduce un peso válido en kg.");data.weights.push({date:todayKey(),kg:v});el.value="";persist()}
+function render(){let w=data.weights.at(-1)?.kg??65;document.getElementById("currentWeight").textContent=w.toFixed(1).replace(".",",")+" kg";document.getElementById("weightGap").textContent=Math.max(0,75-w).toFixed(1).replace(".",",")+" kg para tu objetivo";document.getElementById("weightProgress").value=Math.min(75,w);document.getElementById("workoutCount").textContent=data.workouts.length;document.getElementById("weightHistory").innerHTML=data.weights.length?data.weights.slice().reverse().map(x=>`${x.date}: <b>${x.kg.toFixed(1)} kg</b>`).join("<br>"):"Todavía no hay registros.";renderMeals()}
+function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="mass-builder-75-datos.json";a.click();URL.revokeObjectURL(a.href)}
+function clearData(){if(confirm("¿Borrar todos los registros de este dispositivo?")){data={weights:[],workouts:[],meals:{}};persist()}}
+function setToday(){let d=new Date().getDay(),idx=d===0||d===6?-1:d-1;document.getElementById("todayPlan").textContent=idx<0?"Hoy toca movilidad o descanso.":plan[idx].name}
+let deferredInstallPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;document.getElementById("installButton").style.display="block"});
+async function installApp(){if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;document.getElementById("installButton").style.display="none"}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+renderDays();render();setToday();updateTimer();
+</script>
+</body></html>
